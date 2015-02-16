@@ -76,7 +76,35 @@ public:
 	// Destructor.
 	~RangeArray();
 
+	// ***** Operator Functions *****
 
+	// Return reference to specified element.
+	T &operator[](int i){
+		return arrayptr[i - lowerbound];
+	}
+
+	// Return const references to specified element.
+	const T &operator[](int i)const{
+		return arrayptr[i - lowerbound];
+	}
+
+	// Assign one container to another.
+	RangeArray &operator=(const RangeArray &o);
+
+	// Return const iterator to first element.
+	const_iterator begin() const{
+		return &arrayptr[0];
+	}
+
+	// Return const iterator to last element.
+	const_iterator end() const{
+		return &arrayptr[upperbound - lowerbound];
+	}
+
+	//Return the size of the container.
+	size_type size() const{
+		return end() - begin();
+	}
 };
 
 // ***** Implementations of non-inline functions *****
@@ -85,6 +113,23 @@ public:
 // with each element having the specified initial value.
 template <class T, class A>
 RangeArray<T, A>::RangeArray(int low, int high, const T &t){
+	if(high <= low) throw RAExc("Invalid Range");
+
+	high++;
+
+	// Save endpoint.
+	upperbound = high;
+	lowerbound = low;
+
+	// Allocate memory for the container.
+	arrayptr = a.allocate(high - low);
+
+	// Save the length of the container.
+	len = high - low;
+
+	// Construct the elements.
+	for(size_type i = 0; i < size(); i++)
+		a.construct(&arrayptr[i], t);
 }
 
 // Construct zero-based array num elements
@@ -92,20 +137,86 @@ RangeArray<T, A>::RangeArray(int low, int high, const T &t){
 // for STL compatiblilty.
 template <class T, class A>
 RangeArray<T, A>::RangeArray(int num, const T &t){
+
+	// Save endpoints.
+	upperbound = num;
+	lowerbound = 0;
+
+	// Allocate memory for the container.
+	arrayptr = a.allocate(num);
+
+	// Save the length of the container.
+	len = num;
+
+	// Construct the elements.
+	for(size_type i = 0; i < size(); i++)
+		a.construct(&arrayptr[i], t);
 }
 
 // Construct zero-based array from range of iterators.
 // This constructor is required for STF compatibility.
 template <class T, class A>
 RangeArray<T, A>::RangeArray(iterator start, iterator stop){
+	// Allocate sufficient memory.
+	arrayptr = a.allocate(stop - start);
+
+	upperbound = stop - start;
+	lowerbound = 0;
+
+	len = stop - start;
+
+	// Construct the elements using those
+	// specified by the range of iterators.
+	for(size_type i = 0; i < size(); i++)
+		a.construct(&arrayptr[i], *start++);
 }
 
 // Copy constructor.
 template <class T, class A>
 RangeArray<T, A>::RangeArray(const RangeArray<T, A> &o){
+	// Allocate memory for the copy.
+	arrayptr = a.allocate(o.size());
+
+	upperbound = o.upperbound;
+	lowerbound = o.lowerbound;
+	len = o.len;
+
+	// Make the copy.
+	for(size_type i = 0; i < size(); i++)
+		a.construct(&arrayptr[i], o.arrayptr[i]);
 }
 
 // Destructor.
 template <class T, class A>
 RangeArray<T, A>::~RangeArray(){
+	// Call destructors for elements in the container.
+	for(size_type i = 0; i < size(); i++)
+		a.destroy(&arrayptr[i]);
+
+	// Release memory.
+	a.deallocate(arrayptr, size());
+}
+
+// Assign one container to another.
+template <class T, class A> RangeArray<T, A>&
+	RangeArray<T, A>::operator=(const RangeArray<T, A> &o){
+	// Call destructor for elements in target container.
+	for(size_type i = 0; i < size(); i++)
+		a.destroy(&arrayptr[i]);
+
+	// Release original memory.
+	a.deallocate(arrayptr, size());
+
+	// Allocate memory for new size.
+	arrayptr = a.allocate(o.size());
+
+	upperbound = o.upperbound;
+	lowerbound = o.lowerbound;
+	len = o.len;
+
+	// Make copy.
+	for(size_type i = 0; i < size(); i++)
+		arrayptr[i] = o.arrayptr[i];
+
+	return *this;
 }

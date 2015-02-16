@@ -13,4 +13,9 @@ void display(int v){
 int main(){
 	RangeArray<int> ob(-5, 5 ,0);
 	RangeArray<int>::iterator p;
+
+	cout << ob.size() << endl;
+
+	system("pause");
+	return 0;
 }
