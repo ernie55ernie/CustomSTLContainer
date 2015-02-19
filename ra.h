@@ -102,7 +102,7 @@ public:
 	}
 
 	// Insert range specified by start and stop p.
-	void insert(iterator p, iterator start, iterator end){
+	void insert(iterator p, iterator start, iterator stop){
 		while(start != stop){
 			p = insert(p, *start) + 1;
 			start++;
@@ -143,7 +143,7 @@ public:
 
 	// Remove element from front.
 	void pop_front(){
-		erase(front());
+		erase(begin());
 	}
 
 	// ***** front() and back() functions *****
@@ -170,6 +170,16 @@ public:
 
 	// ***** Iterator Functions *****
 
+	// Return iterator to first element.
+	iterator begin(){
+		return &arrayptr[0];
+	}
+
+	// Return iterator to last element.
+	iterator end(){
+		return &arrayptr[upperbound - lowerbound];
+	}
+
 	// Return const iterator to first element.
 	const_iterator begin() const{
 		return &arrayptr[0];
@@ -180,10 +190,57 @@ public:
 		return &arrayptr[upperbound - lowerbound];
 	}
 
+	// ***** Misc. Functions *****
+
+	// The at() function performs a range check.
+	// Return a reference to the specified element.
+	T &at(int i){
+		if(i < lowerbound || i > upperbound)
+			throw out_of_range("Index Out of Range");
+
+		return arrayptr[i - lowerbound];
+	}
+
 	//Return the size of the container.
 	size_type size() const{
 		return end() - begin();
 	}
+
+	// Return the maximum size of a RangeArray.
+	size_type max_size(){
+		return a.max_size();
+	}
+
+	// Return true if container is empty.
+	bool empty(){
+		return size() == 0;
+	}
+
+	// Exchange the values of two containers.
+	void swap(RangeArray &b){
+		RangeArray<T> tmp;
+
+		tmp = *this;
+		*this = b;
+		b = tmp;
+	}
+
+	// Remove and destroy all elements.
+	void clear(){
+		erase(begin(), end());
+	}
+
+	// ***** Non-STL functions *****
+
+	// Return endpoints.
+	int getlowerbound(){
+		return lowerbound;
+	}
+
+	int getupperbound(){
+		return upperbound;
+	}
+
 };
 
 // ***** Implementations of non-inline functions *****
@@ -370,3 +427,43 @@ typename RangeArray<T, A>::iterator
 }
 
 // ***** Relational Operators *****
+template<class T, class Allocator>
+bool operator==(const RangeArray<T, Allocator> &a,
+	const RangeArray<T, Allocator> &b){
+	if(a.size() != b.size())return false;
+
+	return equal(a.begin(), a.end(), b.begin());
+}
+
+template<class T, class Allocator>
+bool operator!=(const RangeArray<T, Allocator> &a,
+	const RangeArray<T, Allocator> &b){
+	if(a.size() != b.size())return true;
+
+	return !equal(a.begin(), a.end(), b.begin());
+}
+
+template<class T, class Allocator>
+bool operator<(const RangeArray<T, Allocator> &a,
+	const RangeArray<T, Allocator> &b){
+	return lexicographical_compare(a.begin(), a.end(),
+		b.begin(), b.end());
+}
+
+template<class T, class Allocator>
+bool operator>(const RangeArray<T, Allocator> &a,
+	const RangeArray<T, Allocator> &b){
+		return b < a;
+}
+
+template<class T, class Allocator>
+bool operator<=(const RangeArray<T, Allocator> &a,
+	const RangeArray<T, Allocator> &b){
+	return !(a > b);
+}
+
+template<class T, class Allocator>
+bool operator>=(const RangeArray<T, Allocator> &a,
+	const RangeArray<T, Allocator> &b){
+	return !(a < b);
+}
