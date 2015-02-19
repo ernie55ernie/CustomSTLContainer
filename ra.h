@@ -111,6 +111,65 @@ public:
 
 	// ***** Erase Functions *****
 
+	// Erase element at p.
+	iterator erase(iterator p);
+
+	// Erase specified range.
+	iterator erase(iterator start, iterator stop){
+		iterator p = end();
+
+		for(int i = stop - start; i > 0; i--)
+			p = erase(start);
+
+		return p;
+	}
+
+	// ***** Push and Pop function *****
+
+	// Add element to end.
+	void push_back(const T &val){
+		insert(end(), val);
+	}
+
+	// Remove element from end.
+	void pop_back(){
+		erase(end() - 1);
+	}
+
+	// Add element to front.
+	void push_front(const T &val){
+		insert(begin(), val);
+	}
+
+	// Remove element from front.
+	void pop_front(){
+		erase(front());
+	}
+
+	// ***** front() and back() functions *****
+
+	// Return reference to first element.
+	T &front(){
+		return arrayptr[0];
+	}
+
+	// Return const reference to first element.
+	const T &front()const{
+		return arrayptr[0];
+	}
+
+	// Return reference to last element.
+	T &back(){
+		return arrayptr[len - 1];
+	}
+
+	// Return const reference to last element.
+	const T &back()const{
+		return arrayptr[len - 1];
+	}
+
+	// ***** Iterator Functions *****
+
 	// Return const iterator to first element.
 	const_iterator begin() const{
 		return &arrayptr[0];
@@ -286,3 +345,28 @@ typename RangeArray<T, A>::iterator
 
 	return q;
 }
+
+// Erase element at p.
+template<class T, class A>
+typename RangeArray<T, A>::iterator
+	RangeArray<T, A>::erase(iterator p){
+	iterator q = p;
+
+	// Destruct element being erased.
+	if(p != end())a.destroy(p);
+
+	// Adject len and bounds.
+	len--;
+	if(p < &arrayptr[abs(lowerbound)])
+		lowerbound++;
+	else
+		upperbound--;
+
+	// Compact remaining elements.
+	for(;p < end(); p++)
+		*p = *(p + 1);
+
+	return q;
+}
+
+// ***** Relational Operators *****
