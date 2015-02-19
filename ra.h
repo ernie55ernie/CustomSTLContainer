@@ -78,18 +78,38 @@ public:
 
 	// ***** Operator Functions *****
 
-	// Return reference to specified element.
+	// Return trference to specified element.
 	T &operator[](int i){
 		return arrayptr[i - lowerbound];
 	}
 
-	// Return const references to specified element.
+	// Return const reference to specified element.
 	const T &operator[](int i)const{
 		return arrayptr[i - lowerbound];
 	}
 
 	// Assign one container to another.
 	RangeArray &operator=(const RangeArray &o);
+
+	// ***** Insert Functions *****
+
+	// Insert val at p.
+	iterator insert(iterator p, const T &val);
+
+	// Insert num copies of val at p.
+	void insert(iterator p, int num, const T &val){
+		for(;num > 0; num--)p = insert(p, val) + 1;
+	}
+
+	// Insert range specified by start and stop p.
+	void insert(iterator p, iterator start, iterator end){
+		while(start != stop){
+			p = insert(p, *start) + 1;
+			start++;
+		}
+	}
+
+	// ***** Erase Functions *****
 
 	// Return const iterator to first element.
 	const_iterator begin() const{
@@ -219,4 +239,50 @@ template <class T, class A> RangeArray<T, A>&
 		arrayptr[i] = o.arrayptr[i];
 
 	return *this;
+}
+
+// Insert val at p.
+template<class T, class A>
+typename RangeArray<T, A>::iterator
+	RangeArray<T, A>::insert(iterator p, const T &val){
+	iterator q;
+	size_type i, j;
+
+	// Get sufficient memory.
+	T* tmp = a.allocate(size() + 1);
+
+	// Copy existing elements to new array,
+	// inserting new element if possible.
+	for(i = j = 0; i < size(); i++, j++){
+		if(&arrayptr[i] == p){
+			tmp[i] = val;
+			q = &tmp[j];
+			j++;
+		}
+		tmp[j] = arrayptr[i];
+	}
+
+	// Otherwise, the new element goes on end.
+	if(p == end()){
+		tmp[j] = val;
+		q = &tmp[j];
+	}
+
+	// Adjust len and bounds.
+	len++;
+	if(p < &arrayptr[abs(lowerbound)])
+		lowerbound--;
+	else
+		upperbound++;
+	
+	// Call destructors for elements in old container.
+	for(size_type i = 0; i < size() - 1; i++)
+		a.destroy(&arrayptr[i]);
+
+	// Release memory for old container.
+	a.deallocate(arrayptr, size() - 1);
+
+	arrayptr = tmp;
+
+	return q;
 }

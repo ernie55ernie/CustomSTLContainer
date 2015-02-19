@@ -14,6 +14,8 @@ int main(){
 	RangeArray<int> ob(-5, 5 ,0);
 	RangeArray<int>::iterator p;
 
+	ob.insert(&ob[5] ,1);
+
 	cout << ob.size() << endl;
 
 	system("pause");
