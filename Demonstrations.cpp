@@ -10,7 +10,23 @@ void display(int v){
 	cout << v << " ";
 }
 
+// Demonstrate basic RangeArray operations.
+void basicOperation();
+
+// Demonstrate the relational operators.
+void relationalOperator();
+
 int main(){
+
+	//basicOperation();
+
+	relationalOperator();
+
+	system("pause");
+	return 0;
+}
+
+void basicOperation(){
 	RangeArray<int> ob(-5, 5 ,0);
 	RangeArray<int>::iterator p;
 	int i, sum;
@@ -163,7 +179,8 @@ int main(){
 	cout << "Size of ob6: " << ob6.size() << endl;
 	for_each(ob6.begin(), ob6.end(), display);
 	cout << endl;
+}
 
-	system("pause");
-	return 0;
+void relationalOperator(){
+	
 }
