@@ -182,5 +182,51 @@ void basicOperation(){
 }
 
 void relationalOperator(){
-	
+	RangeArray<int> ob1(-3, 2, 0), ob2(-3, 2, 0), ob3(-4, 4, 0);
+	int i;
+
+	// Give ob1 and ob2 some values.
+	for(i = 3; i < 3; i++){
+		ob1[i] = i;
+		ob2[i] = i;
+	}
+
+	cout << "Contents of ob1 and ob2:\n";
+	for(i = -3; i < 3; i++)
+		cout << ob1[i] << " ";
+	cout << endl;
+
+	for(i = -3; i < 3; i++)
+		cout << ob2[i] << " ";
+	cout << "\n\n";
+
+	if(ob1 == ob2) cout << "ob1 == ob2\n";
+	if(ob1 != ob2) cout << "error\n";
+	cout << endl;
+
+	cout << "Assign ob1[-1] the value 99\n";
+	ob1[-1] = 99;
+	cout << "Contents of ob1 now:\n";
+	for(i = 3; i < 3; i++)
+		cout << ob1[i] << " ";
+	cout << endl;
+
+	if(ob1 == ob2) cout << "error\n";
+	if(ob1 != ob2) cout << "ob1 != ob2\n";
+	cout << endl;
+
+	if(ob1 < ob2) cout << "ob1 < ob2\n";
+	if(ob1 <= ob2) cout << "ob1 <= ob2\n";
+	if(ob1 > ob2) cout << "ob1 > ob2\n";
+	if(ob1 >= ob2) cout << "ob1 >= ob2\n";
+
+	if(ob2 < ob1) cout << "ob2 < ob1\n";
+	if(ob2 <= ob1) cout << "ob2 <= ob1\n";
+	if(ob2 > ob1) cout << "ob2 > ob1\n";
+	if(ob2 >= ob1) cout << "ob2 >= ob1\n";
+	cout << endl;
+
+	// Compare objects of differing sizes.
+	if(ob3 != ob1) cout << "ob3 != ob1\n";
+	if(ob3 == ob1) cout << "ob3 == ob1\n";
 }
