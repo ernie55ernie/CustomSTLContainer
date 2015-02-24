@@ -16,11 +16,16 @@ void basicOperation();
 // Demonstrate the relational operators.
 void relationalOperator();
 
+// Store class objects in a RangeArray.
+void classObject();
+
 int main(){
 
 	//basicOperation();
 
-	relationalOperator();
+	//relationalOperator();
+
+	classObject();
 
 	system("pause");
 	return 0;
@@ -229,4 +234,21 @@ void relationalOperator(){
 	// Compare objects of differing sizes.
 	if(ob3 != ob1) cout << "ob3 != ob1\n";
 	if(ob3 == ob1) cout << "ob3 == ob1\n";
+}
+
+class test{
+public:
+	int a;
+	test(){cout << "Constructing\n"; a = 0;}
+
+	test(const test &o){
+		cout << "Copy constructor\n";
+		a = o.a;
+	}
+
+	~test(){cout << "Destructing\n";}
+}
+
+void classObject(){
+	
 }
