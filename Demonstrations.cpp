@@ -247,8 +247,45 @@ public:
 	}
 
 	~test(){cout << "Destructing\n";}
-}
+};
 
 void classObject(){
-	
+	RangeArray<test> t(-3, 1, test());
+	int i;
+
+	cout << "Original contents of t:\n";
+	for(i = -3; i < 2; i++) cout << t[i].a << " ";
+	cout << endl;
+
+	// Give t some new values.
+	for(i = -3; i < 2; i++) t[i].a = i;
+
+	cout << "New contents of t:\n";
+	for(i = -3; i < 2; i++) cout << t[i].a << " ";
+	cout << endl;
+
+	// Copy to new container.
+	RangeArray<test> t2(-7, 3, test());
+	copy(t.begin(), t.end(), &t2[-2]);
+
+	cout << "Contents of t2:\n";
+	for(i = -7; i < 4; i++) cout << t2[i].a << " ";
+	cout << endl;
+
+	RangeArray<test> t3(t.begin() + 1, t.end() - 1);
+	cout << "Contents of t3:\n";
+	for(i = t3.getlowerbound(); i < t3.getupperbound(); i++)
+		cout << t3[i].a << " ";
+	cout << endl;
+
+	t.clear();
+
+	cout << "Size after clear(): " << t.size() << endl;
+
+	// Assign container objects.
+	t = t3;
+	cout << "Contents of t:\n";
+	for(i = t.getlowerbound(); i < t.size(); i++)
+		cout << t[i].a << " ";
+	cout << endl;
 }
